@@ -3,14 +3,28 @@ from rest_framework import viewsets ,permissions, status
 from .models import Note
 from .serializers import NoteSerializer, UserSerializer
 from rest_framework.response import Response
+from rest_framework_jwt.authentication import JSONWebTokenAuthentication
+from django_filters import rest_framework as filters
+from django.contrib.auth.models import User
+from rest_framework.decorators import permission_classes
+from rest_framework.permissions import IsAdminUser
 
-class ListNote(viewsets.ModelViewSet):
+class FilterNote(filters.FilterSet): 
+    class Meta:
+        model = User
+        fields = ["username"]
+
+class ListNote(viewsets.ModelViewSet): 
     queryset = Note.objects.all()
     serializer_class = NoteSerializer
 
     #一覧取得
     def list(self,request):
-        data = NoteSerializer(Note.objects.all().select_related('user').order_by('created_at').reverse(), many=True).data
+        username = request.user.username
+
+        #変更する！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
+        #data = NoteSerializer(Note.objects.all().select_related('user').filter(user__username=username).order_by('created_at').reverse(), many=True).data
+        data = NoteSerializer(Note.objects.all().select_related('user').filter(user__username="motoki").order_by('created_at').reverse(), many=True).data
 
         return Response(status=200 , data=data)
 
@@ -28,12 +42,36 @@ class ListNote(viewsets.ModelViewSet):
             like = request.data['like'],
             user=request.user)
         serializer = NoteSerializer(note, many=False)
-        response = {'message': 'Article created' , 'result': serializer.data}
+        response = {'message': 'Note created' , 'result': serializer.data}
         return Response(response, status=200)
 
-class UserList(viewsets.ModelViewSet):
+#
+class GetUser(viewsets.ModelViewSet):
 
     permission_classes = (permissions.AllowAny,)
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    
+    def list(self,request):
+        username = request.user.username
+        queryset = self.get_queryset().filter(username=username)
+        serializer_class = UserSerializer
+        data = UserSerializer( queryset, many=True).data
+        return Response(data)
+
+    def create(self, request):
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@permission_classes([IsAdminUser])
+class ListUser(viewsets.ModelViewSet):
+
+    permission_classes = (permissions.AllowAny,)
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
 
     def create(self, request):
         serializer = UserSerializer(data=request.data)
