@@ -23,8 +23,8 @@ class ListNote(viewsets.ModelViewSet):
         username = request.user.username
 
         #変更する！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
-        #data = NoteSerializer(Note.objects.all().select_related('user').filter(user__username=username).order_by('created_at').reverse(), many=True).data
-        data = NoteSerializer(Note.objects.all().select_related('user').filter(user__username="motoki").order_by('created_at').reverse(), many=True).data
+        data = NoteSerializer(Note.objects.all().select_related('user').filter(user__username=username).order_by('created_at').reverse(), many=True).data
+        #data = NoteSerializer(Note.objects.all().select_related('user').filter(user__username="motoki").order_by('created_at').reverse(), many=True).data
 
         return Response(status=200 , data=data)
 
@@ -32,6 +32,7 @@ class ListNote(viewsets.ModelViewSet):
     def retrieve(self,request,pk=None):
         note_id = pk
         data = NoteSerializer(Note.objects.filter(uuid=note_id), many=True).data
+        return Response(status=200,data=data)
 
     def create(self, request):
         note = Note.objects.create(
