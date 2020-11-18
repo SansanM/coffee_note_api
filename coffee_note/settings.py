@@ -93,7 +93,7 @@ DATABASES = {
    'ENGINE': 'django.db.backends.mysql',
    'NAME': 'coffee_note',
    'USER': 'root',
-   "PASSWORD": 'A4gp_:@ghsKy5',
+   "PASSWORD": 'gak654jdsafl546',
    'POST': 3306,
    'OPTIONS': {
                 'charset': 'utf8mb4',
