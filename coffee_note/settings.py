@@ -25,7 +25,7 @@ SECRET_KEY = '3bvk74@3$va1kugr)-5i+ed6tfi3%%)&a_!fwr72t#!y7_sa)='
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["127.0.0.1"]
+ALLOWED_HOSTS = ["coffeenoteapi.sankawa.site"]
 
 # Application definition
 
@@ -58,8 +58,7 @@ ROOT_URLCONF = 'coffee_note.urls'
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ORIGIN_WHITELIST = [
-    'http://localhost:3000',
-    'http://127.0.0.1:3000',
+    '*'
 ]
 
 
