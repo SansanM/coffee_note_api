@@ -55,7 +55,6 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'coffee_note.urls'
 
-CORS_ALLOW_CREDENTIALS = True
 
 CORS_ORIGIN_WHITELIST = [
     '*'
