@@ -55,9 +55,8 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'coffee_note.urls'
 
-
 CORS_ORIGIN_WHITELIST = [
-    '*'
+    "https://coffeenote.sankawa.site"
 ]
 
 
