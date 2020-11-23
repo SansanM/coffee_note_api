@@ -34,3 +34,10 @@ class NoteSerializer(serializers.ModelSerializer):
         model = Note
         fields ="__all__"
         read_only_fields = ('created_at', 'updated_at')
+
+class NoteSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+    class Meta:
+        model = Note
+        fields ="__all__"
+        read_only_fields = ("title","uuid","body","sanmi","nigami","like","user","public",'created_at', 'updated_at')

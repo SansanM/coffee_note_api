@@ -9,10 +9,6 @@ from django.contrib.auth.models import User
 from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAdminUser
 
-class FilterNote(filters.FilterSet): 
-    class Meta:
-        model = User
-        fields = ["username"]
 
 class ListNote(viewsets.ModelViewSet): 
     queryset = Note.objects.all()
@@ -22,10 +18,7 @@ class ListNote(viewsets.ModelViewSet):
     def list(self,request):
         username = request.user.username
 
-        #変更する！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
         data = NoteSerializer(Note.objects.all().select_related('user').filter(user__username=username).order_by('created_at').reverse(), many=True).data
-        #data = NoteSerializer(Note.objects.all().select_related('user').filter(user__username="motoki").order_by('created_at').reverse(), many=True).data
-
         return Response(status=200 , data=data)
 
     #詳細の取得
@@ -41,10 +34,33 @@ class ListNote(viewsets.ModelViewSet):
             sanmi = request.data['sanmi'],
             nigami = request.data['nigami'],
             like = request.data['like'],
+            public = request.data["public"],
             user=request.user)
         serializer = NoteSerializer(note, many=False)
         response = {'message': 'Note created' , 'result': serializer.data}
         return Response(response, status=200)
+
+    def destroy(self, request, pk, format=None):
+        note_id = pk
+        username = request.user.username
+        note = Note.objects.filter(uuid=note_id).filter(user__username=username).delete()
+        
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+class ListNote_Public(viewsets.ModelViewSet): 
+    queryset = Note.objects.all()
+    serializer_class = NoteSerializer
+
+    #一覧取得
+    def list(self,request):
+        data = NoteSerializer(Note.objects.all().filter(public="true").order_by('created_at').reverse(), many=True).data
+        if(data):
+            for x in range(len(data)):
+                data[x]["user"].pop("token")
+
+
+        return Response(status=200 , data=data)
+
 
 #
 class GetUser(viewsets.ModelViewSet):
