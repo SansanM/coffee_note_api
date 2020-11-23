@@ -46,8 +46,9 @@ class ListNote_Public(viewsets.ModelViewSet):
 
     #一覧取得
     def list(self,request):
-        data = NoteSerializer(Note.objects.all().select_related('user').filter(public=True).order_by('created_at').reverse(), many=True).data
-
+        data = NoteSerializer(Note.objects.all().filter(public="true").order_by('created_at').reverse(), many=True).data
+        if(data):
+            data[0]["user"].pop("token")
         return Response(status=200 , data=data)
 
 
