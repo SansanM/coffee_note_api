@@ -40,6 +40,13 @@ class ListNote(viewsets.ModelViewSet):
         response = {'message': 'Note created' , 'result': serializer.data}
         return Response(response, status=200)
 
+    def destroy(self, request, pk, format=None):
+        note_id = pk
+        username = request.user.username
+        note = Note.objects.filter(uuid=note_id).filter(user__username=username).delete()
+        
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 class ListNote_Public(viewsets.ModelViewSet): 
     queryset = Note.objects.all()
     serializer_class = NoteSerializer
@@ -48,7 +55,10 @@ class ListNote_Public(viewsets.ModelViewSet):
     def list(self,request):
         data = NoteSerializer(Note.objects.all().filter(public="true").order_by('created_at').reverse(), many=True).data
         if(data):
-            data[0]["user"].pop("token")
+            for x in range(len(data)):
+                data[x]["user"].pop("token")
+
+
         return Response(status=200 , data=data)
 
 
