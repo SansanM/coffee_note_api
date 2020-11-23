@@ -9,10 +9,6 @@ from django.contrib.auth.models import User
 from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAdminUser
 
-class FilterNote(filters.FilterSet): 
-    class Meta:
-        model = User
-        fields = ["username"]
 
 class ListNote(viewsets.ModelViewSet): 
     queryset = Note.objects.all()
@@ -22,10 +18,7 @@ class ListNote(viewsets.ModelViewSet):
     def list(self,request):
         username = request.user.username
 
-        #変更する！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
         data = NoteSerializer(Note.objects.all().select_related('user').filter(user__username=username).order_by('created_at').reverse(), many=True).data
-        #data = NoteSerializer(Note.objects.all().select_related('user').filter(user__username="motoki").order_by('created_at').reverse(), many=True).data
-
         return Response(status=200 , data=data)
 
     #詳細の取得
@@ -41,10 +34,22 @@ class ListNote(viewsets.ModelViewSet):
             sanmi = request.data['sanmi'],
             nigami = request.data['nigami'],
             like = request.data['like'],
+            public = request.data["public"],
             user=request.user)
         serializer = NoteSerializer(note, many=False)
         response = {'message': 'Note created' , 'result': serializer.data}
         return Response(response, status=200)
+
+class ListNote_Public(viewsets.ModelViewSet): 
+    queryset = Note.objects.all()
+    serializer_class = NoteSerializer
+
+    #一覧取得
+    def list(self,request):
+        data = NoteSerializer(Note.objects.all().select_related('user').filter(public=True).order_by('created_at').reverse(), many=True).data
+
+        return Response(status=200 , data=data)
+
 
 #
 class GetUser(viewsets.ModelViewSet):
