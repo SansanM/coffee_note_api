@@ -2,3 +2,5 @@
 /coffee_note/setting_dev.py
 coffee_note/__pycache__/
 *.pyc
+/note/migrations/
+note/__pycache__/

@@ -12,6 +12,6 @@ class Note(models.Model):
     nigami = models.IntegerField("苦味",validators=[MinValueValidator(1), MaxValueValidator(10)])
     like =  models.IntegerField("評価",validators=[MinValueValidator(1), MaxValueValidator(10)])
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    public =models.CharField(verbose_name='公開',default="False", max_length=10)
+    public =models.CharField(verbose_name='公開',default="false", max_length=10)
     created_at = models.DateTimeField("追加日時",auto_now_add=True)
     updated_at = models.DateTimeField("更新日時",auto_now=True)
