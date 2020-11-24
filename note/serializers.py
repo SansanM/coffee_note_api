@@ -53,7 +53,6 @@ class NoteSerializer(serializers.ModelSerializer):
         return validated_data
 
     def validate_public(self,validated_data):
-        print(validated_data)
         if(not(validated_data == "true" or validated_data == "false")):
             raise serializers.ValidationError("trueかfalseの入力にしてください")
         return validated_data

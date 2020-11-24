@@ -28,20 +28,17 @@ class ListNote(viewsets.ModelViewSet):
         return Response(status=200,data=data)
 
     def create(self, request):
-        """
-        note = Note.objects.create(
-            title=request.data['title'],
-            body=request.data['body'],
-            sanmi = request.data['sanmi'],
-            nigami = request.data['nigami'],
-            like = request.data['like'],
-            public = request.data["public"],
-            user=request.user)
-        """
         serializer = NoteSerializer(data=request.data, many=False)
-        print(serializer.is_valid())
         if(serializer.is_valid()):
             response = {'message': 'Note created' , 'result': serializer.data}
+            note = Note.objects.create(
+                title=request.data['title'],
+                body=request.data['body'],
+                sanmi = request.data['sanmi'],
+                nigami = request.data['nigami'],
+                like = request.data['like'],
+                public = request.data["public"],
+                user=request.user)
             return Response(response, status=200)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
