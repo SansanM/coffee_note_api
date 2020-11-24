@@ -40,20 +40,23 @@ class NoteSerializer(serializers.ModelSerializer):
     def validate_sanmi(self,validated_data):
         if(validated_data < 0 or 5 < validated_data):
             raise serializers.ValidationError("1から5の範囲で入力してください")
+        return validated_data
 
     def validate_nigami(self,validated_data):
         if(validated_data < 0 or 5 < validated_data):
             raise serializers.ValidationError("1から5の範囲で入力してください")
+        return validated_data
 
     def validate_like(self,validated_data):
         if(validated_data < 0 or 5 < validated_data):
             raise serializers.ValidationError("1から5の範囲で入力してください")
+        return validated_data
 
     def validate_public(self,validated_data):
         print(validated_data)
         if(not(validated_data == "true" or validated_data == "false")):
             raise serializers.ValidationError("trueかfalseの入力にしてください")
-
+        return validated_data
     
     class Meta:
         model = Note
