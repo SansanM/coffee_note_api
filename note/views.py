@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import viewsets ,permissions, status
 from .models import Note
-from .serializers import NoteSerializer, UserSerializer
+from .serializers import NoteSerializer, UserSerializer ,NotePublicSerializer
 from rest_framework.response import Response
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from django_filters import rest_framework as filters
@@ -28,6 +28,7 @@ class ListNote(viewsets.ModelViewSet):
         return Response(status=200,data=data)
 
     def create(self, request):
+        """
         note = Note.objects.create(
             title=request.data['title'],
             body=request.data['body'],
@@ -36,9 +37,13 @@ class ListNote(viewsets.ModelViewSet):
             like = request.data['like'],
             public = request.data["public"],
             user=request.user)
-        serializer = NoteSerializer(note, many=False)
-        response = {'message': 'Note created' , 'result': serializer.data}
-        return Response(response, status=200)
+        """
+        serializer = NoteSerializer(data=request.data, many=False)
+        print(serializer.is_valid())
+        if(serializer.is_valid()):
+            response = {'message': 'Note created' , 'result': serializer.data}
+            return Response(response, status=200)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def destroy(self, request, pk, format=None):
         note_id = pk
@@ -49,11 +54,11 @@ class ListNote(viewsets.ModelViewSet):
 
 class ListNote_Public(viewsets.ModelViewSet): 
     queryset = Note.objects.all()
-    serializer_class = NoteSerializer
+    serializer_class = NotePublicSerializer
 
     #一覧取得
     def list(self,request):
-        data = NoteSerializer(Note.objects.all().filter(public="true").order_by('created_at').reverse(), many=True).data
+        data = NotePublicSerializer(Note.objects.all().filter(public="true").order_by('created_at').reverse(), many=True).data
         if(data):
             for x in range(len(data)):
                 data[x]["user"].pop("token")
